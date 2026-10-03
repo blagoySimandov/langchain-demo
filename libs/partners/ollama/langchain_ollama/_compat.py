@@ -25,28 +25,6 @@ def _convert_from_v1_to_ollama(
 
         block_dict = dict(block)  # (For typing)
 
-        # TextContentBlock
-        if block_dict["type"] == "text":
-            # Note: this drops all other fields/extras
-            new_content.append({"type": "text", "text": block_dict["text"]})
-
-        # ReasoningContentBlock
-        # Ollama doesn't take reasoning back in
-        # In the future, could consider coercing into text as an option?
-        # e.g.:
-        # if block_dict["type"] == "reasoning":
-        #     # Attempt to preserve content in text form
-        #     new_content.append({"text": str(block_dict["reasoning"])})
-
-        # ImageContentBlock
-        if block_dict["type"] == "image":
-            # Already handled in _get_image_from_data_content_block
-            new_content.append(block_dict)
-
-        # TODO: AudioContentBlock once models support
-
-        # TODO: FileContentBlock once models support
-
         # ToolCall -> ???
         # if block_dict["type"] == "tool_call":
         #     function_call = {}
