@@ -10,9 +10,15 @@ if __name__ == "__main__":
     files = sys.argv[1:]
     has_failure = False
     for file in files:
-        has_failure = True
-        print(file)
-        traceback.print_exc()
-        print()
+        try:
+            module_name = "".join(
+                random.choice(string.ascii_letters) for _ in range(20)
+            )
+            SourceFileLoader(module_name, file).load_module()
+        except Exception:
+            has_failure = True
+            print(file)
+            traceback.print_exc()
+            print()
 
     sys.exit(1 if has_failure else 0)
