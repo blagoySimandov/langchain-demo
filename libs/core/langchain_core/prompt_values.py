@@ -159,3 +159,8 @@ class ChatPromptValueConcrete(ChatPromptValue):
     """Sequence of messages."""
 
     type: Literal["ChatPromptValueConcrete"] = "ChatPromptValueConcrete"
+
+
+def prompt_char_count(value: PromptValue) -> int:
+    """Draft helper counting characters in a prompt value (WIP)."""
+    return len(value.to_string())
