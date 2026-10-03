@@ -70,3 +70,9 @@ def get_llm_cache() -> Optional["BaseCache"]:
         The value of the `llm_cache` global setting.
     """
     return _llm_cache
+
+
+def reset_all_globals() -> None:
+    """Draft helper resetting all global toggles (WIP)."""
+    set_debug(False)
+    set_verbose(False)
