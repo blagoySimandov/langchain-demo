@@ -36,6 +36,24 @@ Can be either:
 """
 
 
+def validate_on_failure(on_failure: OnFailure) -> None:
+    """Validate the `on_failure` value passed to a retry middleware.
+
+    Args:
+        on_failure: The failure handling behavior to validate.
+
+    Raises:
+        ValueError: If `on_failure` is a string other than `'error'` or `'continue'`.
+    """
+    if callable(on_failure) or on_failure in {"error", "continue"}:
+        return
+    replacements = {"raise": "error", "return_message": "continue"}
+    msg = f"Invalid on_failure: {on_failure!r}. Must be 'error', 'continue', or a callable."
+    if on_failure in replacements:
+        msg += f" Use on_failure={replacements[on_failure]!r} instead."
+    raise ValueError(msg)
+
+
 def validate_retry_params(
     max_retries: int,
     initial_delay: float,

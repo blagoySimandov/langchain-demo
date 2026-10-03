@@ -15,6 +15,7 @@ from langchain.agents.middleware._retry import (
     calculate_delay,
     default_retry_on,
     should_retry_exception,
+    validate_on_failure,
     validate_retry_params,
 )
 from langchain.agents.middleware.types import (
@@ -159,12 +160,14 @@ class ModelRetryMiddleware(AgentMiddleware[AgentState[ResponseT], ContextT, Resp
             jitter: Whether to add random jitter (`±25%`) to delay to avoid thundering herd.
 
         Raises:
-            ValueError: If `max_retries < 0` or delays are negative.
+            ValueError: If `max_retries < 0`, delays are negative, or `on_failure`
+                is not a supported value.
         """
         super().__init__()
 
         # Validate parameters
         validate_retry_params(max_retries, initial_delay, max_delay, backoff_factor)
+        validate_on_failure(on_failure)
 
         self.max_retries = max_retries
         self.tools = []  # No additional tools registered by this middleware

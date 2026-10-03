@@ -4,7 +4,6 @@ from __future__ import annotations
 
 import asyncio
 import time
-import warnings
 from typing import TYPE_CHECKING, Any
 
 from langchain_core.messages import ToolMessage
@@ -16,6 +15,7 @@ from langchain.agents.middleware._retry import (
     calculate_delay,
     default_retry_on,
     should_retry_exception,
+    validate_on_failure,
     validate_retry_params,
 )
 from langchain.agents.middleware.types import AgentMiddleware, AgentState, ContextT, ResponseT
@@ -170,10 +170,6 @@ class ToolRetryMiddleware(AgentMiddleware[AgentState[ResponseT], ContextT, Respo
                     string for the `ToolMessage` content, allowing custom error
                     formatting.
 
-                **Deprecated values** (for backwards compatibility):
-
-                - `'return_message'`: Use `'continue'` instead.
-                - `'raise'`: Use `'error'` instead.
             backoff_factor: Multiplier for exponential backoff.
 
                 Each retry waits `initial_delay * (backoff_factor ** retry_number)`
@@ -187,28 +183,14 @@ class ToolRetryMiddleware(AgentMiddleware[AgentState[ResponseT], ContextT, Respo
             jitter: Whether to add random jitter (`±25%`) to delay to avoid thundering herd.
 
         Raises:
-            ValueError: If `max_retries < 0` or delays are negative.
+            ValueError: If `max_retries < 0`, delays are negative, or `on_failure`
+                is not a supported value.
         """
         super().__init__()
 
         # Validate parameters
         validate_retry_params(max_retries, initial_delay, max_delay, backoff_factor)
-
-        # Handle backwards compatibility for deprecated on_failure values
-        if on_failure == "raise":  # type: ignore[comparison-overlap]
-            msg = (  # type: ignore[unreachable]
-                "on_failure='raise' is deprecated and will be removed in a future version. "
-                "Use on_failure='error' instead."
-            )
-            warnings.warn(msg, DeprecationWarning, stacklevel=2)
-            on_failure = "error"
-        elif on_failure == "return_message":  # type: ignore[comparison-overlap]
-            msg = (  # type: ignore[unreachable]
-                "on_failure='return_message' is deprecated and will be removed "
-                "in a future version. Use on_failure='continue' instead."
-            )
-            warnings.warn(msg, DeprecationWarning, stacklevel=2)
-            on_failure = "continue"
+        validate_on_failure(on_failure)
 
         self.max_retries = max_retries
 
