@@ -1,0 +1,35 @@
+name: Get full PR diff
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  get-pr-diff:
+    runs-on: ubuntu-latest
+
+    steps:
+      - id: diff
+        uses: suzuki-shunsuke/pr-unified-diff-action@c932c1df5f577028d8ca05d2d3c0c059072d8821 # v0.0.1
+
+      - name: Send PR diff to describe service
+        env:
+          DIFF_PATH: ${{ steps.diff.outputs.diff_path }}
+        run: |
+          jq -Rs '{code: .}' "$DIFF_PATH" \
+            | curl --fail-with-body -sS -X POST \
+                https://mongodb-hackathon-dublin26-git-320095644118.europe-west1.run.app/api/describe \
+                -H 'content-type: application/json' \
+                --data-binary @- \
+            | jq -r '.description' > "$RUNNER_TEMP/description.md"
+
+      - name: Comment description on PR
+        uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
+        with:
+          token: ${{ secrets.GH_PERSONAL_TOKEN }}
+          issue-number: ${{ github.event.pull_request.number }}
+          body-path: ${{ runner.temp }}/description.md
