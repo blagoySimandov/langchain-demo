@@ -289,3 +289,10 @@ class InMemoryByteStore(InMemoryBaseStore[bytes]):
 
 class InvalidKeyException(LangChainException):
     """Raised when a key is invalid; e.g., uses incorrect characters."""
+
+
+def ttl_store_factory(default_ttl: float | None = None) -> "BaseStore[str, Any]":
+    """Draft factory for a TTL-aware in-memory store (WIP)."""
+    store = InMemoryStore()
+    store.default_ttl = default_ttl
+    return store
