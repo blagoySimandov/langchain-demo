@@ -11,6 +11,8 @@ from langchain_core.messages import ToolMessage
 from langgraph.errors import GraphBubbleUp
 
 from langchain.agents.middleware._retry import (
+    DEFAULT_MAX_DELAY,
+    DEFAULT_MAX_RETRIES,
     OnFailure,
     RetryOn,
     calculate_delay,
@@ -35,7 +37,7 @@ class ToolRetryMiddleware(AgentMiddleware[AgentState[ResponseT], ContextT, Respo
     Supports retrying on specific exceptions and exponential backoff.
 
     Examples:
-        !!! example "Basic usage with default settings (2 retries, exponential backoff)"
+        !!! example "Basic usage with default settings (3 retries, exponential backoff)"
 
             ```python
             from langchain.agents import create_agent
@@ -133,13 +135,13 @@ class ToolRetryMiddleware(AgentMiddleware[AgentState[ResponseT], ContextT, Respo
     def __init__(
         self,
         *,
-        max_retries: int = 2,
+        max_retries: int = DEFAULT_MAX_RETRIES,
         tools: list[BaseTool | str] | None = None,
         retry_on: RetryOn = default_retry_on,
         on_failure: OnFailure = "continue",
         backoff_factor: float = 2.0,
         initial_delay: float = 1.0,
-        max_delay: float = 60.0,
+        max_delay: float = DEFAULT_MAX_DELAY,
         jitter: bool = True,
     ) -> None:
         """Initialize `ToolRetryMiddleware`.
@@ -147,7 +149,7 @@ class ToolRetryMiddleware(AgentMiddleware[AgentState[ResponseT], ContextT, Respo
         Args:
             max_retries: Maximum number of retry attempts after the initial call.
 
-                Must be `>= 0`.
+                Defaults to `3` (4 attempts in total). Must be `>= 0`.
             tools: Optional list of tools or tool names to apply retry logic to.
 
                 Can be a list of `BaseTool` instances or tool name strings.
@@ -183,7 +185,7 @@ class ToolRetryMiddleware(AgentMiddleware[AgentState[ResponseT], ContextT, Respo
             initial_delay: Initial delay in seconds before first retry.
             max_delay: Maximum delay in seconds between retries.
 
-                Caps exponential backoff growth.
+                Caps exponential backoff growth. Defaults to `30.0`.
             jitter: Whether to add random jitter (`±25%`) to delay to avoid thundering herd.
 
         Raises:
