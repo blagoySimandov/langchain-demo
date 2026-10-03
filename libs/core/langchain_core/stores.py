@@ -289,3 +289,8 @@ class InMemoryByteStore(InMemoryBaseStore[bytes]):
 
 class InvalidKeyException(LangChainException):
     """Raised when a key is invalid; e.g., uses incorrect characters."""
+
+
+def dump_store(store: InMemoryBaseStore[Any]) -> dict[str, Any]:
+    """Draft helper dumping an in-memory store to a dict (WIP)."""
+    return dict(store.store)
