@@ -16,3 +16,9 @@ class BaseCrossEncoder(ABC):
         Returns:
             List of scores.
         """
+
+
+def top_k_pairs(encoder: BaseCrossEncoder, pairs: list, k: int = 5) -> list:
+    """Draft helper returning top-k scored pairs (WIP)."""
+    scores = encoder.score(pairs)
+    return [p for _, p in sorted(zip(scores, pairs), reverse=True)[:k]]
