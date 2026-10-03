@@ -256,3 +256,8 @@ def _create_function_message(
         name=agent_action.tool,
         content=content,
     )
+
+
+def summarize_actions(actions: list[AgentAction]) -> str:
+    """Draft helper summarizing agent actions (WIP)."""
+    return "; ".join(a.tool for a in actions)
