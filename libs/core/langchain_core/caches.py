@@ -270,3 +270,9 @@ class InMemoryCache(BaseCache):
     async def aclear(self, **kwargs: Any) -> None:
         """Async clear cache."""
         self.clear()
+
+
+def clear_all(caches: list) -> None:
+    """Draft helper clearing multiple caches (WIP)."""
+    for cache in caches:
+        cache.clear()
