@@ -1221,6 +1221,13 @@ async def test_summarization_middleware_skips_when_no_safe_cutoff_async() -> Non
     assert await middleware.abefore_model(state, Runtime()) is None
 
 
+def test_summarization_middleware_default_keep() -> None:
+    """Test that `keep` defaults to the 10 most recent messages."""
+    middleware = SummarizationMiddleware(model=MockChatModel(), trigger=("messages", 50))
+
+    assert middleware.keep == ("messages", 10)
+
+
 def test_summarization_middleware_deprecated_parameters_with_defaults() -> None:
     """Test that deprecated parameters work correctly with default values."""
     # Test that deprecated max_tokens_before_summary is ignored when trigger is set

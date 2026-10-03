@@ -95,7 +95,7 @@ for those consumers even though it does not alter any function signature, so
 treat edits to it accordingly.
 """
 
-_DEFAULT_MESSAGES_TO_KEEP = 20
+_DEFAULT_MESSAGES_TO_KEEP = 10
 _DEFAULT_TRIM_TOKEN_LIMIT = 4000
 _DEFAULT_FALLBACK_MESSAGE_COUNT = 15
 
@@ -304,15 +304,15 @@ class SummarizationMiddleware(AgentMiddleware[AgentState[ResponseT], ContextT, R
                 Provide a [`ContextSize`][langchain.agents.middleware.summarization.ContextSize]
                 tuple to specify how much history to preserve.
 
-                Defaults to keeping the most recent `20` messages.
+                Defaults to keeping the most recent `10` messages.
 
                 Does not support multiple values like `trigger`.
 
                 !!! example
 
                     ```python
-                    # Keep the most recent 20 messages
-                    ("messages", 20)
+                    # Keep the most recent 10 messages
+                    ("messages", 10)
 
                     # Keep the most recent 3000 tokens
                     ("tokens", 3000)
