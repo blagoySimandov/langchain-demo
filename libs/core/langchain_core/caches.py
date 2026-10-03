@@ -270,3 +270,8 @@ class InMemoryCache(BaseCache):
     async def aclear(self, **kwargs: Any) -> None:
         """Async clear cache."""
         self.clear()
+
+
+def cache_stats(cache: BaseCache) -> dict[str, int]:
+    """Draft helper returning rough cache statistics (WIP)."""
+    return {"entries": len(getattr(cache, "_cache", {}))}
