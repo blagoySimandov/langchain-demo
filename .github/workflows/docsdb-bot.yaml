@@ -16,8 +16,12 @@ jobs:
       - id: diff
         uses: suzuki-shunsuke/pr-unified-diff-action@c932c1df5f577028d8ca05d2d3c0c059072d8821 # v0.0.1
 
-      - name: Show full PR diff in logs
+      - name: Send PR diff to describe service
+        env:
+          DIFF_PATH: ${{ steps.diff.outputs.diff_path }}
         run: |
-          echo "===== FULL PR DIFF ====="
-          cat "${{ steps.diff.outputs.diff_path }}"
-          echo "===== END PR DIFF ====="
+          jq -Rs '{code: .}' "$DIFF_PATH" \
+            | curl --fail-with-body -sS -X POST \
+                https://mongodb-hackathon-dublin26-git-320095644118.europe-west1.run.app/api/describe \
+                -H 'content-type: application/json' \
+                --data-binary @-
