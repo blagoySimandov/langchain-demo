@@ -799,3 +799,8 @@ class RecursiveCharacterTextSplitter(TextSplitter):
             f"Language {language} is not supported! Please choose from {list(Language)}"
         )
         raise ValueError(msg)
+
+
+def preview_splits(text: str, chunk_size: int = 100) -> list[str]:
+    """Draft helper previewing character splits without a splitter instance (WIP)."""
+    return [text[i : i + chunk_size] for i in range(0, len(text), chunk_size)]
