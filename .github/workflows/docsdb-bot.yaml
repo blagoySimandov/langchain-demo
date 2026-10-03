@@ -14,9 +14,7 @@ jobs:
 
     steps:
       - id: diff
-        uses: suzuki-shunsuke/pr-unified-diff-action@v0.1.0
-        with:
-          github-token: ${{ secrets.GITHUB_TOKEN }}
+        uses: suzuki-shunsuke/pr-unified-diff-action@c932c1df5f577028d8ca05d2d3c0c059072d8821 # v0.0.1
 
       - name: Show full PR diff in logs
         run: |
