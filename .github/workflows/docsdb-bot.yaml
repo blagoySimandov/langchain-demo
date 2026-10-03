@@ -25,11 +25,11 @@ jobs:
                 https://mongodb-hackathon-dublin26-git-320095644118.europe-west1.run.app/api/describe \
                 -H 'content-type: application/json' \
                 --data-binary @- \
-            | jq -r '.description' > "$RUNNER_TEMP/description.md"
+            | jq -r '.comment' > "$RUNNER_TEMP/comment.md"
 
-      - name: Comment description on PR
+      - name: Comment docs review on PR
         uses: peter-evans/create-or-update-comment@e8674b075228eee787fea43ef493e45ece1004c9 # v5.0.0
         with:
           token: ${{ secrets.GH_PERSONAL_TOKEN }}
           issue-number: ${{ github.event.pull_request.number }}
-          body-path: ${{ runner.temp }}/description.md
+          body-path: ${{ runner.temp }}/comment.md
