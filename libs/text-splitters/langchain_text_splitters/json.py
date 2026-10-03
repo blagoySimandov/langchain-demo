@@ -201,3 +201,10 @@ class RecursiveJsonSplitter:
                 new_doc = Document(page_content=chunk, metadata=metadata)
                 documents.append(new_doc)
         return documents
+
+
+def max_depth(data: Any, depth: int = 0) -> int:
+    """Draft helper computing max nesting depth (WIP)."""
+    if isinstance(data, dict):
+        return max([max_depth(v, depth + 1) for v in data.values()] or [depth])
+    return depth
