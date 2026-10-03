@@ -946,106 +946,20 @@ def test_tool_retry_multiple_middleware_composition() -> None:
     assert "Success: test" in tool_messages[0].content
 
 
-def test_tool_retry_deprecated_raise_keyword() -> None:
-    """Test ToolRetryMiddleware with deprecated 'raise' keyword shows deprecation warning."""
-    with pytest.warns(DeprecationWarning, match="on_failure='raise' is deprecated"):
-        retry = ToolRetryMiddleware(
-            max_retries=2,
-            on_failure="raise",  # type: ignore[arg-type]
-        )
-
-    # Should be converted to 'error'
-    assert retry.on_failure == "error"
+@pytest.mark.parametrize(
+    ("removed_value", "replacement"),
+    [("raise", "error"), ("return_message", "continue")],
+)
+def test_tool_retry_removed_on_failure_values(removed_value: str, replacement: str) -> None:
+    """Test that removed `on_failure` values raise and point to the replacement."""
+    with pytest.raises(ValueError, match=f"Use on_failure='{replacement}' instead"):
+        ToolRetryMiddleware(on_failure=removed_value)  # type: ignore[arg-type]
 
 
-def test_tool_retry_deprecated_return_message_keyword() -> None:
-    """Test tool retry with deprecated 'return_message' keyword.
-
-    Test ToolRetryMiddleware with deprecated 'return_message' keyword shows deprecation
-    warning.
-    """
-    # Use string concatenation to avoid batch replace affecting test code
-    deprecated_value = "return" + "_message"
-    with pytest.warns(DeprecationWarning, match="on_failure='return_message' is deprecated"):
-        retry = ToolRetryMiddleware(
-            max_retries=2,
-            on_failure=deprecated_value,  # type: ignore[arg-type]
-        )
-
-    # Should be converted to 'continue'
-    assert retry.on_failure == "continue"
-
-
-def test_tool_retry_deprecated_raise_behavior() -> None:
-    """Test ToolRetryMiddleware with deprecated 'raise' forwards to 'error' behavior."""
-    model = FakeToolCallingModel(
-        tool_calls=[
-            [ToolCall(name="failing_tool", args={"value": "test"}, id="1")],
-            [],
-        ]
-    )
-
-    with pytest.warns(DeprecationWarning, match="on_failure='raise' is deprecated"):
-        retry = ToolRetryMiddleware(
-            max_retries=2,
-            initial_delay=0.01,
-            jitter=False,
-            on_failure="raise",  # type: ignore[arg-type]
-        )
-
-    agent = create_agent(
-        model=model,
-        tools=[failing_tool],
-        middleware=[retry],
-        checkpointer=InMemorySaver(),
-    )
-
-    # Should raise the ValueError from the tool (same as 'error')
-    with pytest.raises(ValueError, match="Failed: test"):
-        agent.invoke(
-            {"messages": [HumanMessage("Use failing tool")]},
-            {"configurable": {"thread_id": "test"}},
-        )
-
-
-def test_tool_retry_deprecated_return_message_behavior() -> None:
-    """Test ToolRetryMiddleware with deprecated 'return_message' forwards to 'continue' behavior."""
-    model = FakeToolCallingModel(
-        tool_calls=[
-            [ToolCall(name="failing_tool", args={"value": "test"}, id="1")],
-            [],
-        ]
-    )
-
-    # Use string concatenation to avoid batch replace affecting test code
-    deprecated_value = "return" + "_message"
-    with pytest.warns(DeprecationWarning, match="on_failure='return_message' is deprecated"):
-        retry = ToolRetryMiddleware(
-            max_retries=2,
-            initial_delay=0.01,
-            jitter=False,
-            on_failure=deprecated_value,  # type: ignore[arg-type]
-        )
-
-    agent = create_agent(
-        model=model,
-        tools=[failing_tool],
-        middleware=[retry],
-        checkpointer=InMemorySaver(),
-    )
-
-    result = agent.invoke(
-        {"messages": [HumanMessage("Use failing tool")]},
-        {"configurable": {"thread_id": "test"}},
-    )
-
-    tool_messages = [m for m in result["messages"] if isinstance(m, ToolMessage)]
-    assert len(tool_messages) == 1
-    # Should contain error message (same as 'continue')
-    assert "failing_tool" in tool_messages[0].content
-    assert "3 attempts" in tool_messages[0].content
-    assert "ValueError" in tool_messages[0].content
-    assert tool_messages[0].status == "error"
+def test_tool_retry_invalid_on_failure() -> None:
+    """Test that an unknown `on_failure` string raises a `ValueError`."""
+    with pytest.raises(ValueError, match="Invalid on_failure: 'ignore'"):
+        ToolRetryMiddleware(on_failure="ignore")  # type: ignore[arg-type]
 
 
 def test_tool_retry_does_not_swallow_interrupt() -> None:
