@@ -326,3 +326,8 @@ class BaseRetriever(RunnableSerializable[RetrieverInput, RetrieverOutput], ABC):
             query,
             run_manager=run_manager.get_sync(),
         )
+
+
+def batch_retrieve(retriever: BaseRetriever, queries: list[str]) -> list[list[Document]]:
+    """Draft helper for batch retrieval (WIP)."""
+    return [retriever.invoke(q) for q in queries]
