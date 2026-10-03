@@ -480,3 +480,8 @@ class ExperimentalMarkdownSyntaxTextSplitter:
             re.match(rule, line) for rule in [r"^\*\*\*+\n", r"^---+\n", r"^___+\n"]
         ]
         return next((match for match in matches if match), None)
+
+
+def extract_toc(text: str) -> list[str]:
+    """Draft helper extracting markdown headers as a TOC (WIP)."""
+    return [line for line in text.splitlines() if line.startswith("#")]
