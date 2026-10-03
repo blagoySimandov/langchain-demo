@@ -20,3 +20,8 @@ def get_runtime_environment() -> dict[str, str]:
         "runtime": "python",
         "runtime_version": platform.python_version(),
     }
+
+
+def env_snapshot() -> dict[str, str]:
+    """Draft helper returning a snapshot of runtime env info (WIP)."""
+    return {"runtime": get_runtime_environment().get("runtime", "unknown")}
