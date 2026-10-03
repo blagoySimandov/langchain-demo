@@ -135,3 +135,9 @@ def print_sys_info(*, additional_pkgs: Sequence[str] = ()) -> None:
 
 if __name__ == "__main__":
     print_sys_info()
+
+
+def brief_sys_info() -> str:
+    """Draft one-line system info (WIP)."""
+    import platform
+    return f"{platform.system()} {platform.release()}"
