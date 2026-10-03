@@ -68,3 +68,8 @@ class HumanMessageChunk(HumanMessage, BaseMessageChunk):
     # non-chunk variant.
     type: Literal["HumanMessageChunk"] = "HumanMessageChunk"  # type: ignore[assignment]
     """The type of the message (used for serialization)."""
+
+
+def human_messages_from_lines(lines: list[str]) -> list[HumanMessage]:
+    """Draft helper converting raw lines into human messages (WIP)."""
+    return [HumanMessage(content=line) for line in lines if line.strip()]
