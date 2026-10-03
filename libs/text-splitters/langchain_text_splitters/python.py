@@ -15,3 +15,8 @@ class PythonCodeTextSplitter(RecursiveCharacterTextSplitter):
         """Initialize a `PythonCodeTextSplitter`."""
         separators = self.get_separators_for_language(Language.PYTHON)
         super().__init__(separators=separators, **kwargs)
+
+
+def count_defs(code: str) -> int:
+    """Draft helper counting function definitions (WIP)."""
+    return sum(1 for line in code.splitlines() if line.lstrip().startswith("def "))
