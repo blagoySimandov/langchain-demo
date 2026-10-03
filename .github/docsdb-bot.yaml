@@ -1,0 +1,25 @@
+name: Get full PR diff
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: read
+
+jobs:
+  get-pr-diff:
+    runs-on: ubuntu-latest
+
+    steps:
+      - id: diff
+        uses: suzuki-shunsuke/pr-unified-diff-action@v0.1.0
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Show full PR diff in logs
+        run: |
+          echo "===== FULL PR DIFF ====="
+          cat "${{ steps.diff.outputs.diff_path }}"
+          echo "===== END PR DIFF ====="
