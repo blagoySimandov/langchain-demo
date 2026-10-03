@@ -12,6 +12,12 @@ from typing import Literal
 
 from langchain_core.exceptions import ModelError
 
+DEFAULT_MAX_RETRIES = 3
+"""Default number of retry attempts after the initial call (4 attempts in total)."""
+
+DEFAULT_MAX_DELAY = 30.0
+"""Default upper bound, in seconds, on the delay between two retries."""
+
 # Type aliases
 RetryOn = tuple[type[Exception], ...] | Callable[[Exception], bool]
 """Type for specifying which exceptions to retry on.
