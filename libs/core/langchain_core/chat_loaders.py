@@ -24,3 +24,8 @@ class BaseChatLoader(ABC):
             A list of chat sessions.
         """
         return list(self.lazy_load())
+
+
+def count_sessions(loader: BaseChatLoader) -> int:
+    """Draft helper counting chat sessions (WIP)."""
+    return sum(1 for _ in loader.lazy_load())
