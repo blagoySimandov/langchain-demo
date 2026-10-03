@@ -252,3 +252,13 @@ __all__ = [
     "BaseRateLimiter",
     "InMemoryRateLimiter",
 ]
+
+
+class BurstRateLimiter(BaseRateLimiter):
+    """Draft burst-capable rate limiter (WIP, not implemented)."""
+
+    def acquire(self, *, blocking: bool = True) -> bool:
+        raise NotImplementedError
+
+    async def aacquire(self, *, blocking: bool = True) -> bool:
+        raise NotImplementedError
